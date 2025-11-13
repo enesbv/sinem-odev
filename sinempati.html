@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yapay Zekâ Empati ve Duygusal Zekâ Testi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffe4f4 0, #f9c5d5 35%, #fdf2f8 80%, #ffffff 100%);
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 960px;
+      padding: 20px 16px 32px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fdf2ff;
+      color: #9d174d;
+      border: 1px solid #fecdd3;
+      margin-bottom: 8px;
+    }
+
+    .header-badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #f472b6;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      color: #881337;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 12px;
+    }
+
+    .info {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 16px;
+      max-width: 620px;
+    }
+
+    .legal-small {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 18px;
+      max-width: 640px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.08);
+      border: 1px solid #f9a8d4;
+    }
+
+    .questions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #6b7280;
+      flex-wrap: wrap;
+    }
+
+    .questions-header .progress {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #fce7f3;
+      border: 1px solid #f9a8d4;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    #stepText {
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .question {
+      padding: 10px 0 4px;
+    }
+
+    .question h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .options {
+      margin-top: 6px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    label.option {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 13px;
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: #fdf2ff;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    label.option:hover {
+      background: #fce7f3;
+      border-color: #f9a8d4;
+      box-shadow: 0 4px 10px rgba(248,113,165,0.12);
+    }
+
+    label.option input {
+      margin-top: 2px;
+      accent-color: #ec4899;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      margin-top: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 0;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ec4899, #fb7185);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(236,72,153,0.45);
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.03);
+      box-shadow: 0 12px 26px rgba(236,72,153,0.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 16px rgba(236,72,153,0.4);
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* Modal */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      padding: 14px;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 18px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 18px 18px 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .ai-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .close-btn {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .modal-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      margin: 10px 0 4px;
+    }
+
+    .analysis-text {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.45;
+    }
+
+    .modal-legal {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 6px;
+    }
+
+    /* Grafik */
+
+    .chart-wrapper {
+      margin-top: 4px;
+      padding: 10px 10px 8px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 11px;
+    }
+
+    .chart-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .chart-bar {
+      position: relative;
+      height: 40px;
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #d1d5db;
+      margin-bottom: 4px;
+    }
+
+    .segment {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #111827;
+      font-weight: 500;
+    }
+
+    .seg-red   { background: #fecaca; }
+    .seg-yellow{ background: #fef3c7; }
+    .seg-green { background: #bbf7d0; }
+
+    .chart-indicator {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #1d4ed8;
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.5);
+      transform: translateX(-50%);
+    }
+
+    .chart-x-axis {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #6b7280;
+      margin-top: 2px;
+      padding: 0 2px;
+    }
+
+    .summary-points {
+      font-size: 11px;
+      margin-top: 6px;
+      padding-left: 14px;
+      color: #4b5563;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 10px 24px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .card {
+        padding: 14px 12px 12px;
+      }
+      .modal {
+        padding: 14px 12px 12px;
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header-badge">
+    <span class="dot"></span>
+    Yapay Zekâ Empati ve Duygusal Zekâ Testi
+  </div>
+  <h1>Empati ve Duygusal Zekâ Testi</h1>
+  <div class="subtitle">
+    20 soruluk bu test, başkalarının duygu ve ihtiyaçlarını ne kadar fark ettiğini ve duygusal durumları yönetme biçimini anlamaya çalışır.
+  </div>
+  <div class="info">
+    Sorular, empati, duygusal farkındalık, sınır koyma ve analitik yaklaşım dengesini ölçmek için hazırlanmıştır. Her soruda, sana en yakın gelen seçeneği işaretlemen yeterli.
+  </div>
+  <div class="legal-small">
+    <strong>Not:</strong> Bu test bir farkındalık aracıdır; klinik tanı veya resmi değerlendirme yerine geçmez.
+  </div>
+
+  <div class="card">
+    <div class="questions-header">
+      <span id="stepText">Soru 1 / 20</span>
+      <span class="progress" id="progressText">0 / 20 soru</span>
+    </div>
+
+    <div class="question">
+      <h3 id="questionText"></h3>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <button class="btn-primary" id="nextButton" onclick="nextStep()">Sonraki Soru</button>
+
+    <div class="footer-note">
+      Puanlama: A = 3 · B = 2 · C = 1 &nbsp; | &nbsp; Toplam puan aralığı: 20–60
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Yapay Zekâ Analizi — Empati Profilin</div>
+        <div class="ai-tag">Grafiksel sonuç · Klinik tanı değildir</div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div>
+      <div class="chart-wrapper">
+        <div class="chart-title">Empati ve Duygusal Zekâ Testi Sonucu</div>
+        <div class="chart-bar">
+          <div class="segment seg-red">Duygusal sınırlar güçlü</div>
+          <div class="segment seg-yellow">Dengeli empati</div>
+          <div class="segment seg-green">Çok yüksek empati</div>
+          <div class="chart-indicator" id="scoreIndicator"></div>
+        </div>
+        <div class="chart-x-axis">
+          <span>20</span><span>30</span><span>40</span><span>50</span><span>60</span>
+        </div>
+      </div>
+
+      <div class="modal-section-title">Toplam Puanın</div>
+      <div id="scoreText" class="analysis-text"></div>
+
+      <div class="modal-section-title" style="margin-top:10px;">Sözlü Yorum</div>
+      <div id="summaryText" class="analysis-text"></div>
+
+      <ul class="summary-points">
+        <li><strong>Yeşil:</strong> Çok yüksek empati ve duygusal zekâ (54–60)</li>
+        <li><strong>Sarı:</strong> Dengeli empati ve analitik yaklaşım (40–53)</li>
+        <li><strong>Kırmızı:</strong> Duygusal sınırlar güçlü / bağımsız yaklaşım (20–39)</li>
+      </ul>
+
+      <div class="modal-legal">
+        Bu test, empati ve duygusal zekâ eğilimini anlamaya yöneliktir. Sonuçların seni rahatsız ediyorsa, bir ruh sağlığı uzmanıyla paylaşman faydalı olabilir.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sorular ve seçenekler (A/B/C)
+  var questions = [
+    {
+      text: "Arkadaşın üzgün ama sebebini söylemiyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "“Konuşmak istersen buradayım” diyerek destek olursun.", score: 3 },
+        { label: "B", text: "Sebebini sorup çözüm önerileri sunarsın.", score: 2 },
+        { label: "C", text: "Kendi işine bakarsın, paylaşırsa söyler.", score: 1 }
+      ]
+    },
+    {
+      text: "Toplu ortamda biri seni utandırdı. Tepkin ne olur?",
+      options: [
+        { label: "A", text: "Durumu hafife alırsın.", score: 3 },
+        { label: "B", text: "Özelde konuşup yanlış anlamayı düzeltirsin.", score: 2 },
+        { label: "C", text: "Sert karşılık verirsin.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın sınavdan düşük not aldı. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Moral verirsin.", score: 3 },
+        { label: "B", text: "Hatalarını analiz edip öneri sunarsın.", score: 2 },
+        { label: "C", text: "Kendi başarılarını hatırlatırsın.", score: 1 }
+      ]
+    },
+    {
+      text: "İş yerinde bir arkadaşın haksızlığa uğradı. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Desteklersin.", score: 3 },
+        { label: "B", text: "Objektif çözüm önerirsin.", score: 2 },
+        { label: "C", text: "İşine odaklanırsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Sokakta bir yabancı yardıma ihtiyaç duyuyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Yardım edersin.", score: 3 },
+        { label: "B", text: "Güvenli bir şekilde yardım edersin.", score: 2 },
+        { label: "C", text: "Devam edersin.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın başarısını abartılı övüyor, sen daha iyi yaptığını düşünüyorsun. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Tebrik edersin.", score: 3 },
+        { label: "B", text: "Nazikçe paylaşabilirsin.", score: 2 },
+        { label: "C", text: "Kendi başarılarını vurgularsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın sana soğuk davranıyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Duygularını anlamaya çalışırsın.", score: 3 },
+        { label: "B", text: "Sebebini sorarsın.", score: 2 },
+        { label: "C", text: "Kendi işine devam edersin.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın bir sır verdi ama sen istemeden başkasına söylendi. Tepkin ne olur?",
+      options: [
+        { label: "A", text: "Özür dileyip durumu düzeltirsin.", score: 3 },
+        { label: "B", text: "Nedenini sorgular ve çözüm ararsın.", score: 2 },
+        { label: "C", text: "Sır vermemek için dikkat edersin, ama tepki göstermezsin.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın yeni bir karar aldı ama sen katılmıyorsun. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Desteklersin ve saygı gösterirsin.", score: 3 },
+        { label: "B", text: "Kendi düşünceni nazikçe paylaşırsın.", score: 2 },
+        { label: "C", text: "Kararına karışmazsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir grup içinde fikirlerin göz ardı edildi. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Durumu sakince açıklarsın.", score: 3 },
+        { label: "B", text: "Alternatif çözüm önerirsin.", score: 2 },
+        { label: "C", text: "Sessiz kalırsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın sinirli davranıyor ve sana bağırıyor. Tepkin ne olur?",
+      options: [
+        { label: "A", text: "Sakin kalıp durumu anlamaya çalışırsın.", score: 3 },
+        { label: "B", text: "Nedenini sorarsın ve çözüm önerirsin.", score: 2 },
+        { label: "C", text: "Karşılık verirsin veya uzaklaşırsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Topluluk içinde biri kendini dışlanmış hissediyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Onu gruba dahil edersin.", score: 3 },
+        { label: "B", text: "Durumu analiz edip adım atarsın.", score: 2 },
+        { label: "C", text: "O kişi kendi haline bırakılır.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın sana hediye aldı ama sen beğenmedin. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Teşekkür edip takdir gösterirsin.", score: 3 },
+        { label: "B", text: "Duygularını nazikçe paylaşırsın.", score: 2 },
+        { label: "C", text: "Kendi düşünceni saklarsın.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın yaptığı bir hata seni etkiledi. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Durumu affedip tartışmayı büyütmezsin.", score: 3 },
+        { label: "B", text: "Nazikçe tartışıp çözüm önerirsin.", score: 2 },
+        { label: "C", text: "Söz konusu hatayı unutmaz ve eleştirirsin.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın seni kıskanıyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Onun hislerini anlar ve destek olursun.", score: 3 },
+        { label: "B", text: "Duygularını açıklığa kavuşturursun.", score: 2 },
+        { label: "C", text: "Mesafeni korursun.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın zor bir karar alıyor ve senden tavsiye istiyor.",
+      options: [
+        { label: "A", text: "Duygularını önceliklendirip destek olursun.", score: 3 },
+        { label: "B", text: "Mantıklı ve pratik öneriler sunarsın.", score: 2 },
+        { label: "C", text: "Karar tamamen onun işi der geçersin.", score: 1 }
+      ]
+    },
+    {
+      text: "Arkadaşın seni yanlış anladı ve kırıldı. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Açıklama yapıp özür dilersin.", score: 3 },
+        { label: "B", text: "Durumu analiz edip çözüm önerirsin.", score: 2 },
+        { label: "C", text: "Zamanla kendiliğinden düzelir dersin.", score: 1 }
+      ]
+    },
+    {
+      text: "Sosyal medyada bir arkadaşın eleştiriliyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Onu savunursun.", score: 3 },
+        { label: "B", text: "Nazikçe durumu yorumlarsın.", score: 2 },
+        { label: "C", text: "Müdahale etmezsin.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın çok mutlu bir haber paylaştı. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Kendi sevincinle kutlarsın.", score: 3 },
+        { label: "B", text: "Nazikçe tebrik eder ve öneriler sunarsın.", score: 2 },
+        { label: "C", text: "Sade bir tebrik mesajı gönderirsin.", score: 1 }
+      ]
+    },
+    {
+      text: "Bir arkadaşın sana güveniyor ve sır veriyor. Ne yaparsın?",
+      options: [
+        { label: "A", text: "Sır saklarsın ve güvenini korursun.", score: 3 },
+        { label: "B", text: "Sır konusunda dikkatli olup durumu değerlendirirsin.", score: 2 },
+        { label: "C", text: "Paylaşmamak için çaba gösterirsin, ama bazen unutur ya da söyler misin diye endişelenirsin.", score: 1 }
+      ]
+    }
+  ];
+
+  var currentIndex = 0;
+  var answers = [];
+
+  var stepTextEl = document.getElementById("stepText");
+  var progressEl = document.getElementById("progressText");
+  var questionTextEl = document.getElementById("questionText");
+  var optionsContainerEl = document.getElementById("optionsContainer");
+  var nextButtonEl = document.getElementById("nextButton");
+
+  function renderQuestion() {
+    var q = questions[currentIndex];
+    stepTextEl.textContent = "Soru " + (currentIndex + 1) + " / " + questions.length;
+    progressEl.textContent = answers.filter(function(a) { return typeof a === "number"; }).length +
+      " / " + questions.length + " soru";
+
+    questionTextEl.textContent = (currentIndex + 1) + ". " + q.text;
+    optionsContainerEl.innerHTML = "";
+
+    q.options.forEach(function(opt, idx) {
+      var label = document.createElement("label");
+      label.className = "option";
+
+      var input = document.createElement("input");
+      input.type = "radio";
+      input.name = "answer";
+      input.value = opt.score;
+
+      if (answers[currentIndex] === opt.score) {
+        input.checked = true;
+      }
+
+      var span = document.createElement("span");
+      span.textContent = opt.label + ") " + opt.text;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      optionsContainerEl.appendChild(label);
+    });
+
+    if (currentIndex === questions.length - 1) {
+      nextButtonEl.textContent = "Yapay Zekâ Analizini Gör";
+    } else {
+      nextButtonEl.textContent = "Sonraki Soru";
+    }
+  }
+
+  function nextStep() {
+    var selected = document.querySelector('input[name="answer"]:checked');
+    if (!selected) {
+      alert("Devam etmeden önce bir seçenek işaretlemen gerekiyor 🙂");
+      return;
+    }
+
+    answers[currentIndex] = parseInt(selected.value, 10);
+
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      analyze();
+    }
+  }
+
+  function analyze() {
+    if (answers.length !== questions.length) {
+      alert("Tüm soruları tamamlamadan analiz yapamam.");
+      return;
+    }
+
+    var total = answers.reduce(function(sum, v) { return sum + v; }, 0); // 20–60
+    var scoreTextEl = document.getElementById("scoreText");
+    var summaryTextEl = document.getElementById("summaryText");
+
+    var kategori = "";
+    var yorum = "";
+
+    if (total >= 54) {
+      kategori = "🌟 Çok yüksek empati ve duygusal zekâ";
+      yorum = "Diğer insanların duygularını kolayca fark edebilen, ilişkilerde destekleyici ve anlayışlı bir profil görünümü var. Yüksek empati, hem sosyal bağları güçlendirir hem de zaman zaman seni duygusal olarak yorabilir; bu nedenle kendi sınırlarını da koruman önemli.";
+    } else if (total >= 40) {
+      kategori = "⚖️ Dengeli empati ve analitik yaklaşım";
+      yorum = "Empati kurarken aynı zamanda mantık ve mesafeyi koruma eğilimindesin. Hem duygusal hem analitik düşünceyi birlikte kullanabiliyorsun. Bu, karar verirken dengeli olmanı sağlar; zaman zaman duyguları daha fazla ifade etmeye alan açmak bağları derinleştirebilir.";
+    } else {
+      kategori = "🛡️ Duygusal sınırlar güçlü, bağımsız yaklaşım";
+      yorum = "Empati kapasiten olsa da, duygusal mesafeyi ve kendi alanını korumayı ön planda tutuyor olabilirsin. Bu, seni kolay etkilenmekten koruyabilir; fakat bazı ilişkilerde duygularını daha açık göstermek bağları güçlendirebilir. Tercih ettiğin bu stil yanlış değil; sadece farkında olmak önemli.";
+    }
+
+    scoreTextEl.innerHTML = "Toplam puanın: <strong>" + total +
+      "</strong> (20–60 aralığında).<br>Kategori: <strong>" + kategori + "</strong>";
+
+    summaryTextEl.innerHTML = yorum;
+
+    // Grafikte mavi çizginin konumu
+    var minScore = 20, maxScore = 60;
+    var clamped = Math.max(minScore, Math.min(maxScore, total));
+    var percent = ((clamped - minScore) / (maxScore - minScore)) * 100;
+
+    var indicator = document.getElementById("scoreIndicator");
+    indicator.style.left = percent + "%";
+
+    openModal();
+  }
+
+  function openModal() {
+    document.getElementById("modalBackdrop").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("modalBackdrop").style.display = "none";
+  }
+
+  // İlk soru
+  renderQuestion();
+</script>
+
+</body>
+</html>
