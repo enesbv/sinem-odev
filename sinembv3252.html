@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Yaşam Denge Profili Testi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffe4f4 0, #f9c5d5 35%, #fdf2f8 80%, #ffffff 100%);
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 960px;
+      padding: 20px 16px 32px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fdf2ff;
+      color: #9d174d;
+      border: 1px solid #fecdd3;
+      margin-bottom: 8px;
+    }
+
+    .header-badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #f472b6;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      color: #881337;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 12px;
+    }
+
+    .info {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 20px;
+      max-width: 620px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.08);
+      border: 1px solid #f9a8d4;
+    }
+
+    .questions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #6b7280;
+      flex-wrap: wrap;
+    }
+
+    .questions-header .progress {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #fce7f3;
+      border: 1px solid #f9a8d4;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    #stepText {
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .question {
+      padding: 10px 0 4px;
+    }
+
+    .question h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .options {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    label.option {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 13px;
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: #fdf2ff;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    label.option:hover {
+      background: #fce7f3;
+      border-color: #f9a8d4;
+      box-shadow: 0 4px 10px rgba(248,113,165,0.12);
+    }
+
+    label.option input {
+      margin-top: 2px;
+      accent-color: #ec4899;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      margin-top: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 11px 0;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ec4899, #fb7185);
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(236,72,153,0.45);
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.03);
+      box-shadow: 0 12px 26px rgba(236,72,153,0.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 16px rgba(236,72,153,0.4);
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: center;
+    }
+
+    /* Modal */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      padding: 14px;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 18px;
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 18px 18px 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .ai-tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+
+    .close-btn {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .modal-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      margin: 10px 0 4px;
+    }
+
+    .pill {
+      font-size: 11px;
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 1px solid #fecaca;
+      margin-right: 4px;
+      margin-bottom: 2px;
+    }
+
+    .analysis-text {
+      font-size: 12px;
+      color: #4b5563;
+      line-height: 1.45;
+    }
+
+    .tip-box {
+      margin-top: 8px;
+      padding: 8px 9px;
+      border-radius: 8px;
+      background: #f5f3ff;
+      border: 1px dashed #c4b5fd;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .index-list {
+      font-size: 12px;
+      color: #4b5563;
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    .index-list li {
+      margin-bottom: 3px;
+    }
+
+    .bars {
+      margin-top: 6px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .bar-label {
+      width: 110px;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ec4899, #fb7185);
+      width: 0%;
+      transition: width 0.5s ease-out;
+    }
+
+    .bar-value {
+      width: 38px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 10px 24px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .card {
+        padding: 14px 12px 12px;
+      }
+      .modal {
+        padding: 14px 12px 12px;
+        border-radius: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="header-badge">
+    <span class="dot"></span>
+    Yaşam Denge Profili — Gelişmiş Test
+  </div>
+  <h1>Yaşam Denge Profili Testi</h1>
+  <div class="subtitle">
+    Günlük düşünce ve önceliklerin üzerinden, hayatında hangi temanın daha baskın olduğunu analiz etmeye çalışan basit bir yapay zekâ testi.
+  </div>
+  <div class="info">
+    Bilimsel tanı aracı değildir; <strong>eğlence ve farkındalık</strong> amaçlıdır. Çıkan sonuçlar, hayatına dışarıdan bakan sakin bir göz gibi düşünülebilir.
+  </div>
+
+  <div class="card">
+    <div class="questions-header">
+      <span id="stepText">Soru 1 / 12</span>
+      <span class="progress" id="progressText">0 / 12 soru</span>
+    </div>
+
+    <div class="question">
+      <h3 id="questionText"></h3>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+
+    <button class="btn-primary" id="nextButton" onclick="nextStep()">Sonraki Soru</button>
+
+    <div class="footer-note">
+      Cevapların sadece bu sayfada tutulur; sayfa kapanınca sıfırlanır.
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Yapay Zekâ Analizi — Yaşam Denge Profili</div>
+        <div class="ai-tag">Otomatik yorum · Deneysel içerik</div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div>
+      <div class="modal-section-title">Ana Teman &amp; İkincil Vurgun</div>
+      <div id="pillContainer"></div>
+      <div class="analysis-text" id="mainText"></div>
+
+      <div class="tip-box" id="tipBox"></div>
+
+      <div class="modal-section-title" style="margin-top:10px;">Psikoloji İndeksleri</div>
+      <ul class="index-list" id="indexList"></ul>
+
+      <div class="modal-section-title" style="margin-top:10px;">Kategori Dağılımın</div>
+      <div class="bars" id="barsContainer"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Kategoriler
+  var categories = {
+    maddi:  { name: "Maddi / Güvence",       color: "#fb7185" },
+    iliski: { name: "İlişki / Sevgi",        color: "#ec4899" },
+    ozgurluk: { name: "Özgürlük / Macera",   color: "#f97316" },
+    zihin: { name: "Zihin / Felsefe",        color: "#6366f1" }
+  };
+
+  // Sorular
+  var questions = [
+    {
+      text: "Günlük hayatta zihnini en çok meşgul eden şey aşağıdakilerden hangisine daha yakın?",
+      options: [
+        { text: "Para, iş, kariyer planları", cat: "maddi" },
+        { text: "İlişkilerim, sevdiklerim, duygusal durumlar", cat: "iliski" },
+        { text: "Gezmek, yeni deneyimler, özgür hissetmek", cat: "ozgurluk" },
+        { text: "Hayatın anlamı, gelecek, düşüncelerim", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Risk almaya bakış açın hangisine daha yakın?",
+      options: [
+        { text: "Finansal riskleri iyi planlarsam alırım", cat: "maddi" },
+        { text: "İlişkide duygusal risk almaktan çekinmem", cat: "iliski" },
+        { text: "Spontane kararlar almayı severim", cat: "ozgurluk" },
+        { text: "Önce uzun uzun düşünür, analiz ederim", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Yoğun bir günün sonunda en çok hangisi seni toparlar?",
+      options: [
+        { text: "Hedeflerimi, yapılacakları düzenlemek", cat: "maddi" },
+        { text: "Sevdiğim biriyle sakin sohbet", cat: "iliski" },
+        { text: "Dışarı çıkmak, yürüyüş, küçük bir kaçış", cat: "ozgurluk" },
+        { text: "Müzik, düşünme, kendi iç dünyama çekilmek", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Uzun vadeli hayal kur dendiğinde ilk aklına gelen şey neye daha yakın?",
+      options: [
+        { text: "Güçlü maddi konfor, istikrarlı kariyer", cat: "maddi" },
+        { text: "Sağlam bir ilişki / sıcak bir aile ortamı", cat: "iliski" },
+        { text: "Seyahat, farklı şehirler, özgür bir yaşam", cat: "ozgurluk" },
+        { text: "Üretmek, öğrenmek, kendini geliştirmek", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Bir karar alırken en çok hangisini tartarsın?",
+      options: [
+        { text: "Bana finansal ve somut olarak ne kazandırır?", cat: "maddi" },
+        { text: "İlişkilerimi ve hislerimi nasıl etkiler?", cat: "iliski" },
+        { text: "Beni ne kadar özgür bırakır?", cat: "ozgurluk" },
+        { text: "Değerlerime ve bakışıma ne kadar uyuyor?", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Kendini çoğu zaman hangi rolde hayal ediyorsun?",
+      options: [
+        { text: "İşini iyi yöneten, planlı biri", cat: "maddi" },
+        { text: "Destekleyici partner / iyi arkadaş", cat: "iliski" },
+        { text: "Keşif yapan, sınırları zorlayan biri", cat: "ozgurluk" },
+        { text: "Düşünen, üreten, analiz eden biri", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Stres altında kaldığında ilk refleksin neye benziyor?",
+      options: [
+        { text: "Çözüme odaklanır, iş planı çıkarırım", cat: "maddi" },
+        { text: "Yakın birine anlatma ihtiyacı duyarım", cat: "iliski" },
+        { text: "Sakinleşmek için ortam değiştiririm", cat: "ozgurluk" },
+        { text: "İçime kapanır, düşünmeye başlarım", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Zaman ayırmakta en çok zorlandığın alan hangisi?",
+      options: [
+        { text: "Kendime yatırım / finansal planlama", cat: "maddi" },
+        { text: "Duygusal paylaşımlar / sevdiklerim", cat: "iliski" },
+        { text: "Dinlenmek ve keyfi aktiviteler", cat: "ozgurluk" },
+        { text: "Okuma, öğrenme, zihinsel beslenme", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Kendini iyi hissettiğin bir dönemi düşündüğünde, o dönemin ana tonu neydi?",
+      options: [
+        { text: "İşim / okul düzenim çok iyiydi", cat: "maddi" },
+        { text: "İlişkilerim çok güçlüydü", cat: "iliski" },
+        { text: "Bolca gezip yeni şeyler deniyordum", cat: "ozgurluk" },
+        { text: "Yeni şeyler öğreniyor, üretim yapıyordum", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Sosyal medyada en çok hangi içerik türü dikkatin çekiyor?",
+      options: [
+        { text: "Para, kariyer, girişimcilik, başarı hikâyeleri", cat: "maddi" },
+        { text: "İlişkiler, duygusal içerikler, insan hikâyeleri", cat: "iliski" },
+        { text: "Seyahat vlogları, macera, farklı yaşam tarzları", cat: "ozgurluk" },
+        { text: "Bilgi veren, düşündüren içerikler", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Kendini geliştirme deyince aklına ilk ne geliyor?",
+      options: [
+        { text: "Maddi durumumu ve kariyerimi güçlendirmek", cat: "maddi" },
+        { text: "İletişimimi, ilişki dilimi iyileştirmek", cat: "iliski" },
+        { text: "Konfor alanımdan çıkmak, yeni şeyler denemek", cat: "ozgurluk" },
+        { text: "Zihinsel olarak derinleşmek, ufkumu açmak", cat: "zihin" }
+      ]
+    },
+    {
+      text: "Hayatında eksikliğini en çok hissettiğin şey ne tarafa yakın?",
+      options: [
+        { text: "Finansal istikrar / net hedefler", cat: "maddi" },
+        { text: "Gerçekten anlaşıldığım ilişkiler", cat: "iliski" },
+        { text: "Kendime ait alan ve özgürlük hissi", cat: "ozgurluk" },
+        { text: "Anlam duygusu / içsel tatmin", cat: "zihin" }
+      ]
+    }
+  ];
+
+  var currentIndex = 0;
+  var answers = [];
+  var stepTextEl = document.getElementById("stepText");
+  var progressEl = document.getElementById("progressText");
+  var questionTextEl = document.getElementById("questionText");
+  var optionsContainerEl = document.getElementById("optionsContainer");
+  var nextButtonEl = document.getElementById("nextButton");
+
+  function renderQuestion() {
+    var q = questions[currentIndex];
+    stepTextEl.textContent = "Soru " + (currentIndex + 1) + " / " + questions.length;
+    progressEl.textContent = answers.length + " / " + questions.length + " soru";
+
+    questionTextEl.textContent = (currentIndex + 1) + ". " + q.text;
+    optionsContainerEl.innerHTML = "";
+
+    for (var i = 0; i < q.options.length; i++) {
+      var opt = q.options[i];
+
+      var label = document.createElement("label");
+      label.className = "option";
+
+      var input = document.createElement("input");
+      input.type = "radio";
+      input.name = "answer";
+      input.value = opt.cat;
+
+      // Eğer bu soruya önceden cevap verildiyse seçili getir
+      if (answers[currentIndex] === opt.cat) {
+        input.checked = true;
+      }
+
+      var span = document.createElement("span");
+      span.textContent = opt.text;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      optionsContainerEl.appendChild(label);
+    }
+
+    if (currentIndex === questions.length - 1) {
+      nextButtonEl.textContent = "Yapay Zekâ Analizini Gör";
+    } else {
+      nextButtonEl.textContent = "Sonraki Soru";
+    }
+  }
+
+  function nextStep() {
+    var selected = document.querySelector('input[name="answer"]:checked');
+    if (!selected) {
+      alert("Devam etmeden önce bir seçenek işaretlemen gerekiyor 🙂");
+      return;
+    }
+
+    answers[currentIndex] = selected.value;
+
+    if (currentIndex < questions.length - 1) {
+      currentIndex++;
+      if (answers.length < currentIndex) {
+        answers.length = currentIndex;
+      }
+      renderQuestion();
+    } else {
+      analyze();
+    }
+  }
+
+  function analyze() {
+    var scores = { maddi: 0, iliski: 0, ozgurluk: 0, zihin: 0 };
+    for (var i = 0; i < answers.length; i++) {
+      scores[answers[i]] += 1;
+    }
+
+    var keys = ["maddi", "iliski", "ozgurluk", "zihin"];
+    keys.sort(function(a, b) { return scores[b] - scores[a]; });
+
+    var primaryKey = keys[0];
+    var secondaryKey = keys[1];
+    var total = questions.length;
+
+    var primaryPercent = Math.round((scores[primaryKey] / total) * 100);
+    var secondaryPercent = Math.round((scores[secondaryKey] / total) * 100);
+
+    var mainText = "";
+    var tipText = "";
+
+    if (primaryKey === "maddi") {
+      mainText =
+        "Yaşam enerjinin belirgin bir kısmı <strong>maddi güvence, somut başarı ve hedef odaklı yaşama</strong> yönelmiş görünüyor. Plan yapmak, işi veya eğitimi düşünmek, \"geleceğim garanti olsun\" isteği senin için güçlü bir motivasyon kaynağı. " +
+        "İkincil vurgu olan <strong>" + categories[secondaryKey].name + "</strong> teması ise, yalnızca para değil; ilişkisel veya içsel tarafı da önemseyen bir denge aradığını gösteriyor.";
+      tipText =
+        "Öneri: Maddi hedeflerin güçlü kalırken, sadece sonuçlara değil sürece de küçük keyifler eklemek, zihnini yumuşatıp duygusal tarafını besleyebilir.";
+    } else if (primaryKey === "iliski") {
+      mainText =
+        "Analiz, hayatında <strong>ilişki, bağ kurma ve duygusal atmosferin</strong> ciddi bir ağırlığı olduğunu işaret ediyor. İnsanlarla arandaki bağın iyi olması, kendini değerli ve güvende hissetmenle çok bağlantılı olabilir. " +
+        "İkincil tema olarak öne çıkan <strong>" + categories[secondaryKey].name + "</strong>, duygusal hayatınla birlikte maddi tarafı veya iç dünyayı da ihmal etmediğini gösteriyor.";
+      tipText =
+        "Öneri: Duygusal bağların güçlü olması büyük bir kaynak; buna ek olarak kendi bireysel hedeflerini de netleştirmek, ilişkilere yaslanmadan ayakta durma hissini güçlendirebilir.";
+    } else if (primaryKey === "ozgurluk") {
+      mainText =
+        "Profilin, içten içe <strong>özgürlük, hareket ve deneyim odaklı</strong> bir yaşam ritmine yakın olduğunu gösteriyor. Rutin seni bir noktadan sonra sıkabiliyor; yeni yerler, insanlar, tecrübeler seni canlı tutuyor. " +
+        "İkincil vurgu olan <strong>" + categories[secondaryKey].name + "</strong> ise, tamamen dağılmadan, bir miktar güvence veya duygusal kök de aradığını düşündürüyor.";
+      tipText =
+        "Öneri: Özgürlüğü kaybetmeden sana iyi gelen birkaç sabit alışkanlık veya ilişkiyi \"ev\" gibi düşünmek, zihin yorgunluğunu azaltabilir.";
+    } else {
+      mainText =
+        "Analiz, hayatını anlamlandırma biçiminde <strong>düşünce, analiz ve iç dünya</strong> temasının ağır bastığını söylüyor. Olayları sadece yüzeyde değil, derinde okumaya eğilimin var; bu da zaman zaman yorucu ama güçlü bir farkındalık alanı yaratıyor. " +
+        "İkincil tema olarak gelen <strong>" + categories[secondaryKey].name + "</strong>, zihinsel derinliğin yanında somut başarı, ilişki ya da özgürlük gibi pratik alanları da önemsediğini gösteriyor.";
+      tipText =
+        "Öneri: Zihnin çok çalıştığında, vücudu harekete geçirmek (yürüyüş, spor, kısa kaçamaklar) düşünceyi dengeler ve analiz yükünü hafifletir.";
+    }
+
+    var indexList = [];
+    if (scores.iliski >= scores.maddi && scores.iliski >= scores.ozgurluk) {
+      indexList.push("<strong>Duygusal Denge:</strong> İlişkiler senin için merkezde; duygusal iniş çıkışlar olabilir ama bağ kurma kapasiten yüksek.");
+    } else {
+      indexList.push("<strong>Duygusal Denge:</strong> Hislerini tamamen yok saymıyorsun ama gün içindeki ana ajanda daha çok hedef, düşünce veya özgürlük tarafında dönüyor.");
+    }
+
+    if (scores.zihin >= 3) {
+      indexList.push("<strong>Bilişsel Stil:</strong> Analitik ve sorgulayıcı; karar almadan önce düşünme ve artı-eksi tartma eğilimin baskın.");
+    } else if (scores.ozgurluk > scores.maddi) {
+      indexList.push("<strong>Bilişsel Stil:</strong> Deneyimsel öğrenen tip; yaparak, yaşayarak anlam çıkarıyorsun.");
+    } else {
+      indexList.push("<strong>Bilişsel Stil:</strong> Pratik ve çözüm odaklı; iş gördürmeyi, net sonucu seviyorsun.");
+    }
+
+    if (scores.ozgurluk >= 3) {
+      indexList.push("<strong>Yaşam Ritmi:</strong> Sabitlikten çok akışa yakınsın. Plan olsa bile, içinden geldiği gibi hareket etmek sana iyi geliyor.");
+    } else if (scores.maddi >= 3) {
+      indexList.push("<strong>Yaşam Ritmi:</strong> Programlı ve hedef odaklı; mental ajandan çoğu zaman dolu çalışıyor.");
+    } else {
+      indexList.push("<strong>Yaşam Ritmi:</strong> Denge arayan, bazen yoğun bazen yavaş modda giden karma ama yönetilebilir bir ritim.");
+    }
+
+    // Modal içini doldur
+    var pillContainer = document.getElementById("pillContainer");
+    pillContainer.innerHTML = "";
+    var pill1 = document.createElement("span");
+    pill1.className = "pill";
+    pill1.textContent = "Ana Tema: " + categories[primaryKey].name + " (" + primaryPercent + "%)";
+    var pill2 = document.createElement("span");
+    pill2.className = "pill";
+    pill2.textContent = "İkincil Vurgu: " + categories[secondaryKey].name + " (" + secondaryPercent + "%)";
+    pillContainer.appendChild(pill1);
+    pillContainer.appendChild(pill2);
+
+    document.getElementById("mainText").innerHTML = mainText;
+    document.getElementById("tipBox").innerHTML = tipText;
+
+    var indexListEl = document.getElementById("indexList");
+    indexListEl.innerHTML = "";
+    for (var i = 0; i < indexList.length; i++) {
+      var li = document.createElement("li");
+      li.innerHTML = indexList[i];
+      indexListEl.appendChild(li);
+    }
+
+    var barsContainer = document.getElementById("barsContainer");
+    barsContainer.innerHTML = "";
+    for (var j = 0; j < keys.length; j++) {
+      var key = keys[j];
+      var percent = Math.round((scores[key] / total) * 100);
+
+      var row = document.createElement("div");
+      row.className = "bar-row";
+
+      var label = document.createElement("div");
+      label.className = "bar-label";
+      label.textContent = categories[key].name;
+
+      var track = document.createElement("div");
+      track.className = "bar-track";
+
+      var fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.background = "linear-gradient(90deg, " + categories[key].color + ", #fb7185)";
+      track.appendChild(fill);
+
+      var value = document.createElement("div");
+      value.className = "bar-value";
+      value.textContent = percent + "%";
+
+      row.appendChild(label);
+      row.appendChild(track);
+      row.appendChild(value);
+      barsContainer.appendChild(row);
+
+      (function(f, p) {
+        setTimeout(function() { f.style.width = p + "%"; }, 30);
+      })(fill, percent);
+    }
+
+    openModal();
+  }
+
+  function openModal() {
+    document.getElementById("modalBackdrop").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("modalBackdrop").style.display = "none";
+  }
+
+  // İlk soruyu bas
+  renderQuestion();
+</script>
+
+</body>
+</html>
